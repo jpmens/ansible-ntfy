@@ -8,10 +8,10 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: nfty
+module: ntfy
 short_description: Send push notifications to ntfy
 description:
-  - Sends push notifications to your phone or desktop via C(POST) requests and the C(nfty.sh) open source program.
+  - Sends push notifications to your phone or desktop via C(POST) requests and the C(ntfy.sh) open source program.
 options:
   msg:
     description:
@@ -20,12 +20,12 @@ options:
     type: str
   topic:
     description:
-      - The I(topic) (in nfty parlance) to send messages to. If C(topic) is not specified as a parameter its value will be taken from play vars or finally from the default value. Note that I(nfty) has no authentication so technically anybody can see what you post.
+      - I(Topic) (in ntfy parlance) to send messages to. If C(topic) is not specified as a parameter its value will be taken from play vars or finally from the default value. Note that I(ntfy) has no authentication so technically anybody can see what you post.
     default: "test-topic"
     type: str
   url:
     description:
-      - The URL to C(POST) messages to, if you host your own I(nfty) or HTTP endpoint.
+      - URL to C(POST) messages to, if you host your own I(ntfy) or HTTP endpoint.
     type: str
     default: "https://ntfy.sh"
   attrs:
@@ -39,8 +39,8 @@ author:
 '''
 
 EXAMPLES = '''
-- name: Report completion via nfty
-  nfty:
+- name: Report completion via ntfy
+  ntfy:
     topic: "admin-alerts"
     msg: "Deployment on {{ inventory_hostname }} complete"
 
@@ -50,7 +50,7 @@ EXAMPLES = '''
     msg: "thanks for all the fish"
 
 - name: Add some bells and whistles
-  nfty:
+  ntfy:
     topic: "admin-alerts"
     msg: "I'm done"
     attrs:
