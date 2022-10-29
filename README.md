@@ -18,7 +18,7 @@ Consider the following playbook which created the two notifications above:
     - name: "different topic"
       ntfy:
             msg: "that's a wrap"
-	    topic: "admin-alerts"
+            topic: "admin-alerts"
             attrs:
                tags: [ rotating_light, heavy_check_mark ]
                priority: 4
