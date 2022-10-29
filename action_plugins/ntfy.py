@@ -57,6 +57,25 @@ EXAMPLES = '''
        tags: [ heavy_check_mark ]
        priority: 4
 '''
+
+RETURN = '''
+event:
+    description: type of event as handled by I(ntfy)
+    returned: always
+    type: str
+    sample: "message"
+id:
+    description: I(ntfy) ID for this message
+    returned: always
+    type: str
+    sample: "nFvnCfGKDvIj"
+time:
+    description: Unix epoch time at which I(ntfy) received the message
+    returned: always
+    type: int
+    sample: 1667069121
+'''
+
 import json
 
 from ansible.errors import AnsibleError, AnsibleActionFail, AnsibleActionSkip
