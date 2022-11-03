@@ -20,7 +20,7 @@ options:
     type: str
   topic:
     description:
-      - I(Topic) (in ntfy parlance) to send messages to. If C(topic) is not specified as a parameter its value will be taken from play vars or finally from the default value. Note that I(ntfy) has no authentication so technically anybody can see what you post.
+      - I(Topic) (in ntfy parlance) to send messages to. If C(topic) is not specified as a parameter its value will be taken from play vars or finally from the default value. Note that the public I(ntfy) server provides no authentication so technically anybody can see what you post.
     default: "test-topic"
     type: str
   url:
@@ -28,6 +28,12 @@ options:
       - URL to C(POST) messages to, if you host your own I(ntfy) or HTTP endpoint.
     type: str
     default: "https://ntfy.sh"
+  auth:
+    description:
+      - 'An optional base64-encoded string containing "<username>:<password>" to be used during basic authentication to the URL: C(printf "jane:secret" | base64)'
+    type: str
+    default: "none"
+    required: no
   attrs:
     description:
       - A optional dict of additional attributes to associate with C(msg). See EXAMPLES and https://ntfy.sh/docs/publish/ for details.
@@ -47,6 +53,7 @@ EXAMPLES = '''
 - name: Use our own endpoint
   ntfy:
     url: "http://localhost:8864/"
+    auth: "{{ (username + ':' + password) | b64encode }}"  # note parens
     msg: "thanks for all the fish"
 
 - name: Add some bells and whistles
@@ -113,6 +120,7 @@ class ActionModule(ActionBase):
         # get topic from argument to module or from play vars
         topic = self._task.args.get('topic', task_vars.get('topic', 'test-topic'))
         msg   = self._task.args.get('msg', "Ansible playbook")
+        auth   = self._task.args.get('auth', None)
         attrs   = self._task.args.get('attrs', None)
 
         if not isinstance(topic, string_types):
@@ -131,9 +139,14 @@ class ActionModule(ActionBase):
         if attrs is not None:
             data.update(attrs)
 
+        headers = {}
+        if auth is not None:
+            headers["Authorization"] = "Basic %s" % auth
+
         resp = open_url(url,
                     data=json.dumps(data),
                     method='POST',
+                    headers=headers,
                     http_agent="Ansible/ntfy")
 
         # {"id":"xvimLyRhdF2B","time":1666985632,"event":"message","topic":"12","message":"that's a wrap"}
