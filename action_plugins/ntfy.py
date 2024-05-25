@@ -34,6 +34,12 @@ options:
     type: str
     default: "none"
     required: no
+  token:
+    description:
+      - 'An optional method to authenticate using a token instead of basic auth C(tk_1234567890abcdefghijklmnopqrst)'
+    type: str
+    default: "none"
+    required: no
   attrs:
     description:
       - A optional dict of additional attributes to associate with C(msg). See EXAMPLES and https://ntfy.sh/docs/publish/ for details.
@@ -54,6 +60,8 @@ EXAMPLES = '''
   ntfy:
     url: "http://localhost:8864/"
     auth: "{{ (username + ':' + password) | b64encode }}"  # note parens
+    # or use a token
+    token: "tk_1234567890abcdefghijklmnopqrst"
     msg: "thanks for all the fish"
 
 - name: Add some bells and whistles
@@ -121,6 +129,7 @@ class ActionModule(ActionBase):
         topic = self._task.args.get('topic', task_vars.get('topic', 'test-topic'))
         msg   = self._task.args.get('msg', "Ansible playbook")
         auth   = self._task.args.get('auth', None)
+        token   = self._task.args.get('token', None)
         attrs   = self._task.args.get('attrs', None)
 
         if not isinstance(topic, string_types):
@@ -142,6 +151,9 @@ class ActionModule(ActionBase):
         headers = {}
         if auth is not None:
             headers["Authorization"] = "Basic %s" % auth
+
+        if token is not None:
+            headers["Authorization"] = "Bearer %s" % token
 
         resp = open_url(url,
                     data=json.dumps(data),
