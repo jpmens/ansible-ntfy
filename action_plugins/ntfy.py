@@ -97,7 +97,7 @@ from ansible.errors import AnsibleError, AnsibleActionFail, AnsibleActionSkip
 from ansible.plugins.action import ActionBase
 from ansible.module_utils.six import string_types
 from ansible.module_utils.urls import open_url
-from ansible.module_utils._text import to_text
+from ansible.module_utils.common.text.converters import to_text
 
 # Load the display handler to send logging to CLI or relevant display mechanism
 try:
